@@ -6,6 +6,7 @@ from kivy.uix.label import Label
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivy.animation import Animation
+import kivy.utils
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
 import math
@@ -25,12 +26,12 @@ class CalculatorScreen(Screen):
         self.calc_layout.add_widget(self.input_box)
 
         buttons = [
-            ['7', '8', '9', '/', 'M+'],
-            ['4', '5', '6', '*', 'M-'],
-            ['1', '2', '3', '-', 'MR'],
-            ['.', '0', 'C', '+', 'ANS'],
-            ['(', ')', '^', '√', 'Dec'],
-            ['%', 'DEL', '=', 'Histórico']
+            ['C', '( )', '%', '/'],
+            ['7', '8', '9', '*'],
+            ['4', '5', '6', '-'],
+            ['1', '2', '3', '+'],
+            ['+/-', '0', ',', '='],
+            ['Histórico','DEL','ANS']
         ]
 
         for row in buttons:
@@ -40,14 +41,18 @@ class CalculatorScreen(Screen):
                     button = Button(text=label, font_size=24, on_press=self.on_button_press)
                     button.background_normal = ''
                     
-                    if label in ['/', '*', '-', '+', 'ANS', 'M+', 'M-', 'MR', 'Dec', '√']:
-                        button.background_color = [0.2, 0.6, 0.8, 1]
+                    if label in ['/', '*', '-', '+','( )','%','/','+/-',',']:
+                        button.background_color = kivy.utils.get_color_from_hex("#2B3133")
+                        button.color = kivy.utils.get_color_from_hex("#41B6DD")
+                    elif label in ['C']:
+                        button.background_color = kivy.utils.get_color_from_hex("#2B3133")
+                        button.color = kivy.utils.get_color_from_hex("#b32110")
                     elif label in ['=']:
-                        button.background_color = (1, 0.5, 0, 1)
-                    elif label in ['Histórico']:
-                        button.background_color = (0.1, 0.3, 0.9, 1)
+                        button.background_color = kivy.utils.get_color_from_hex("#557B88")
+                    elif label in ['Histórico','DEL', 'ANS']:
+                        button.background_color = kivy.utils.get_color_from_hex("#262E33")
                     else:
-                        button.background_color = [0.4, 0.4, 0.4, 1]  
+                        button.background_color = kivy.utils.get_color_from_hex("#2B3033") 
                     
                     button.bind(on_press=self.animate_button)  
                     h_layout.add_widget(button)
@@ -64,25 +69,25 @@ class CalculatorScreen(Screen):
                 self.input_box.text = ''
             elif button_text == 'DEL':
                 self.input_box.text = current_text[:-1]
-            elif button_text == '√':
-                self.input_box.text = str(math.sqrt(float(current_text)))
-            elif button_text == '^':
-                self.input_box.text += '**'
+            #elif button_text == '√':
+            #    self.input_box.text = str(math.sqrt(float(current_text)))
+            #elif button_text == '^':
+            #    self.input_box.text += '**'
             elif button_text == '=':
                 result = eval(self.input_box.text)
                 self.add_to_history(self.input_box.text, result) 
                 self.input_box.text = str(result)
                 self.last_result = result
             elif button_text == 'ANS':
-                self.input_box.text += str(self.last_result)
-            elif button_text == 'M+':
-                self.memory += float(self.input_box.text)
-            elif button_text == 'M-':
-                self.memory -= float(self.input_box.text)
-            elif button_text == 'MR':
-                self.input_box.text = str(self.memory)
-            elif button_text == 'Dec':
-                self.input_box.text = str(round(float(self.input_box.text), 2)) 
+               self.input_box.text += str(self.last_result)
+            #elif button_text == 'M+':
+            #    self.memory += float(self.input_box.text)
+            #elif button_text == 'M-':
+            #    self.memory -= float(self.input_box.text)
+            #elif button_text == 'MR':
+            #    self.input_box.text = str(self.memory)
+            # elif button_text == 'Dec':
+            #    self.input_box.text = str(round(float(self.input_box.text), 2)) 
             elif button_text == 'Histórico':
                 self.manager.current = 'history' 
             else:
