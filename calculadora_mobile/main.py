@@ -69,25 +69,25 @@ class CalculatorScreen(Screen):
                 self.input_box.text = ''
             elif button_text == 'DEL':
                 self.input_box.text = current_text[:-1]
-            #elif button_text == '√':
-            #    self.input_box.text = str(math.sqrt(float(current_text)))
-            #elif button_text == '^':
-            #    self.input_box.text += '**'
             elif button_text == '=':
                 result = eval(self.input_box.text)
                 self.add_to_history(self.input_box.text, result) 
                 self.input_box.text = str(result)
                 self.last_result = result
             elif button_text == 'ANS':
-               self.input_box.text += str(self.last_result)
-            #elif button_text == 'M+':
-            #    self.memory += float(self.input_box.text)
-            #elif button_text == 'M-':
-            #    self.memory -= float(self.input_box.text)
-            #elif button_text == 'MR':
-            #    self.input_box.text = str(self.memory)
-            # elif button_text == 'Dec':
-            #    self.input_box.text = str(round(float(self.input_box.text), 2)) 
+                self.input_box.text += str(self.last_result)
+            elif button_text == '( )':
+                cursor_index = self.input_box.cursor_index()
+                # Se já houver um número ou expressão selecionada, coloca entre parênteses
+                if current_text and current_text[cursor_index:].strip():
+                    new_text = f"{current_text[:cursor_index]}({current_text[cursor_index:]})"
+                    self.input_box.text = new_text
+                    self.input_box.cursor = (cursor_index + 1, 0)
+                else:
+                    # Caso contrário, adiciona parênteses vazios na posição do cursor
+                    new_text = f"{current_text[:cursor_index]}(){current_text[cursor_index:]}"
+                    self.input_box.text = new_text
+                    self.input_box.cursor = (cursor_index + 1, 0)
             elif button_text == 'Histórico':
                 self.manager.current = 'history' 
             else:
@@ -96,6 +96,7 @@ class CalculatorScreen(Screen):
             self.input_box.text = 'Erro: Divisão por zero'
         except Exception as e:
             self.input_box.text = f'Erro: {str(e)}'
+
 
     def add_to_history(self, expression, result):
         """Adiciona o cálculo ao histórico"""
